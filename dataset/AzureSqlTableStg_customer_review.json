@@ -1,0 +1,17 @@
+{
+	"name": "AzureSqlTableStg_customer_review",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "hr",
+			"table": "stg_customer_review"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

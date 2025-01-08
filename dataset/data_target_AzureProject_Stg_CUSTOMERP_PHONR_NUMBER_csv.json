@@ -1,0 +1,49 @@
+{
+	"name": "data_target_AzureProject_Stg_CUSTOMERP_PHONR_NUMBER_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyNewLinkService",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureDataLakeGen2"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "STG_CUSTOMER_PHONE_NUMBER.csv",
+				"folderPath": "target/AzureProject/Stg",
+				"fileSystem": "data"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CUSTOMER_PHONE_NUMBER_ID",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_PHONE_NUMBER",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_PHONE_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_PHONE_STATUS",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_ID",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

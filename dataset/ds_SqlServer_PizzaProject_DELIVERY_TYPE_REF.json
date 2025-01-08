@@ -1,0 +1,20 @@
+{
+	"name": "ds_SqlServer_PizzaProject_DELIVERY_TYPE_REF",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureDataLakeGen2"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "DELIVERY_TYPE_REF"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

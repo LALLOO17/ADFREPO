@@ -1,0 +1,36 @@
+{
+	"name": "ds_PIZZAPROJECT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyNewLinkService",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TargetFileName": {
+				"type": "string",
+				"defaultValue": "PizzaProject.csv"
+			}
+		},
+		"folder": {
+			"name": "AzureDataLakeGen2"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().TargetFileName",
+					"type": "Expression"
+				},
+				"fileSystem": "PIZZAPROJECT"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

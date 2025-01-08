@@ -1,0 +1,41 @@
+{
+	"name": "ds_data_dataflow_adf_dep_lkp_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyNewLinkService",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureDataLakeGen2"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ADF_DEP_LKP.csv",
+				"folderPath": "DataFlow",
+				"fileSystem": "data"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "DEP_ID",
+				"type": "String"
+			},
+			{
+				"name": "DEP_NAME",
+				"type": "String"
+			},
+			{
+				"name": "LOCATION",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

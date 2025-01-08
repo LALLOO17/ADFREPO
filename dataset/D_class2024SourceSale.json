@@ -1,0 +1,28 @@
+{
+	"name": "D_class2024SourceSale",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyNewLinkService",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureDataLakeGen2"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Sales_04252022.csv",
+				"folderPath": "Source/Sales",
+				"fileSystem": "class2024"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

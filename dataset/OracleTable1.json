@@ -1,0 +1,20 @@
+{
+	"name": "OracleTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkServiceOracle",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "OracleDataBase"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "EMP_DEPT_ADF"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

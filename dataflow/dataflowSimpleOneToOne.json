@@ -1,0 +1,61 @@
+{
+	"name": "dataflowSimpleOneToOne",
+	"properties": {
+		"folder": {
+			"name": "DataFlowMix"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SRC_data_source_departments_csv",
+						"type": "DatasetReference"
+					},
+					"name": "departmentCsv"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "TGT_data_target_DataFlow_csv",
+						"type": "DatasetReference"
+					},
+					"name": "DataFlowCsv"
+				}
+			],
+			"transformations": [
+				{
+					"name": "selectDepartmentIdDepartmentName"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          DEPARTMENT_ID as short,",
+				"          DEPARTMENT_NAME as string,",
+				"          MANAGER_ID as short,",
+				"          LOCATION_ID as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> departmentCsv",
+				"departmentCsv select(mapColumn(",
+				"          DEPARTMENT_ID,",
+				"          LOCATION_ID,",
+				"          DEPARTMENT_NAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectDepartmentIdDepartmentName",
+				"selectDepartmentIdDepartmentName sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['DataFlow.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DataFlowCsv"
+			]
+		}
+	}
+}

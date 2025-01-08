@@ -1,0 +1,50 @@
+{
+	"name": "AzureSqlTablehr_customer_review_fact",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "customer_dim_key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "location_dim_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "date_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "order_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "feedback",
+				"type": "nvarchar"
+			},
+			{
+				"name": "feedback_date",
+				"type": "date"
+			},
+			{
+				"name": "recomended",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "customer_review_fact"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

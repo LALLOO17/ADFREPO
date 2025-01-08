@@ -1,0 +1,78 @@
+{
+	"name": "Sc2_pip_QueryJoinHrSchema",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data Sc2 QueryJoinHrSchema",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": "SELECT \r\nEMP.EMPLOYEE_ID, \r\nEMP.FIRST_NAME, \r\nEMP.LAST_NAME,\r\nEMP.HIRE_DATE, \r\nEMP.JOB_ID, \r\nEMP.SALARY,\r\nEMP.DEPARTMENT_ID, \r\nDEPT.DEPARTMENT_NAME, \r\nLOC.CITY, \r\nLOC.STATE_PROVINCE, \r\nCTR.COUNTRY_NAME, \r\nRGN.REGION_NAME, \r\nJB.JOB_TITLE\r\nFROM HR.EMPLOYEES EMP\r\nJOIN HR.DEPARTMENTS DEPT\r\nON EMP.DEPARTMENT_ID = DEPT.DEPARTMENT_ID\r\nJOIN HR.LOCATIONS LOC\r\nON DEPT.LOCATION_ID = LOC.LOCATION_ID\r\nJOIN HR.COUNTRIES CTR\r\nON LOC.COUNTRY_ID = CTR.COUNTRY_ID \r\nJOIN HR.REGIONS RGN\r\nON CTR.REGION_ID = RGN.REGION_ID\r\nJOIN HR.JOBS JB\r\nON EMP.JOB_ID = JB.JOB_ID\r\nJOIN HR.job_history JBH\r\nON JBH.JOB_ID = JB.JOB_ID",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "OracleTable1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "TGT_data_target_ParamFileName",
+						"type": "DatasetReference",
+						"parameters": {
+							"DataSetParamFileName": {
+								"value": "@pipeline().parameters.TargetFileName",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"TargetFileName": {
+				"type": "string",
+				"defaultValue": "NEW.csv"
+			}
+		},
+		"folder": {
+			"name": "PipeLineCopy"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-01-08T17:12:27Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

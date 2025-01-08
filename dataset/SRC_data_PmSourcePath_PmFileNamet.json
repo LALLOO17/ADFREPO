@@ -1,0 +1,61 @@
+{
+	"name": "SRC_data_PmSourcePath_PmFileNamet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyNewLinkService",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"DataSetSourcePath": {
+				"type": "string",
+				"defaultValue": "Sales"
+			},
+			"DataSetSourceFileName": {
+				"type": "string",
+				"defaultValue": "data_04282022.csv"
+			}
+		},
+		"folder": {
+			"name": "AzureDataLakeGen2"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().DataSetSourceFileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().DataSetSourcePath",
+					"type": "Expression"
+				},
+				"fileSystem": "data"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "DEPARTMENT_ID",
+				"type": "String"
+			},
+			{
+				"name": "DEPARTMENT_NAME",
+				"type": "String"
+			},
+			{
+				"name": "MANAGER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LOCATION_ID",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

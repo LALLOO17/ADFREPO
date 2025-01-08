@@ -1,0 +1,247 @@
+{
+	"name": "df_Pizza_Project_customer_review_fact",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableStg_customer_review",
+						"type": "DatasetReference"
+					},
+					"name": "StgCustomerReview"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableOrder_dim",
+						"type": "DatasetReference"
+					},
+					"name": "OrderDim"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_SqlServer_CustomerDim",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerDim"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableHrLocationDim",
+						"type": "DatasetReference"
+					},
+					"name": "LocationDim"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableDateDateDim",
+						"type": "DatasetReference"
+					},
+					"name": "DateDataDim"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTablehr_customer_review_fact",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "join3"
+				},
+				{
+					"name": "join4"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CUSTOMER_REVIEW_ID as integer,",
+				"          RATING_SCALE as decimal(5,2),",
+				"          FEEDBACK as string,",
+				"          FEEDBACK_DATE as date,",
+				"          RECOMENDED as string,",
+				"          CUSTOMER_ID as integer,",
+				"          ORDER_ID as integer,",
+				"          STORE_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> StgCustomerReview",
+				"source(output(",
+				"          ORDER_ID as integer,",
+				"          ORDER_DATE as date,",
+				"          ORDER_STATUS as string,",
+				"          TOTAL_AMOUNT as decimal(5,2),",
+				"          TOTAL_TAX as decimal(5,2),",
+				"          TIPS as decimal(5,2),",
+				"          TOTAL_QUANTITY as integer,",
+				"          DELIVERY_ID as integer,",
+				"          CHANNEL_ID as integer,",
+				"          STORE_LOCATION_ID as integer,",
+				"          CUSTOMER_ID as integer,",
+				"          PAYMENT_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> OrderDim",
+				"source(output(",
+				"          CUSTOMER_DIM_KEY as long,",
+				"          customer_id as short,",
+				"          CUSTOMER_FIRST_NAME as string,",
+				"          CUSTOMER_LAST_NAME as string,",
+				"          IS_LOYAL as boolean,",
+				"          PrimaryEMAIL as string,",
+				"          SecondaryEMAIL as string,",
+				"          PRIMARY_PHONE_NUMBER as string,",
+				"          SECONDARY_PHONE_NUMBER as string,",
+				"          Office_ADDRESS_LANE1 as string,",
+				"          Office_ADDRESS_LANE_2 as string,",
+				"          Office_CITY_NAME as string,",
+				"          Office_STATE_NAME as string,",
+				"          Office_COUNTRY_NAME as string,",
+				"          Office_ZIP_CODE as integer,",
+				"          Office_GATE_CODE as short,",
+				"          Residential_ADDRESS_LANE1 as string,",
+				"          Residential_ADDRESS_LANE_2 as string,",
+				"          Residential_CITY_NAME as string,",
+				"          Residential_STATE_NAME as string,",
+				"          Residential_COUNTRY_NAME as string,",
+				"          Residential_ZIP_CODE as integer,",
+				"          Residential_GATE_CODE as short,",
+				"          JOINING_DATE as string,",
+				"          STG_CREATE_USER_ID as string,",
+				"          STG_CREATE_USER_DATE as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> CustomerDim",
+				"source(output(",
+				"          Location_Dim_Key as integer,",
+				"          STORE_LOCATION_ID as integer,",
+				"          STORE_NAME as string,",
+				"          STORE_ADDRESS as string,",
+				"          STORE_PHONE_NUMBER as string,",
+				"          STATE_COUNTRY as string,",
+				"          STORE_OPEN_TIME as string,",
+				"          STORE_CLOSE_TIME as string,",
+				"          STATE_NAME as string,",
+				"          CREATE_USER_DATE as date,",
+				"          FLAG as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> LocationDim",
+				"source(output(",
+				"          Date_Key as integer,",
+				"          day_yyyy_mm_dd as date,",
+				"          day_us_mm_dd_yyyy as date,",
+				"          day_us_long as string,",
+				"          day_us_m_d_yy as date,",
+				"          week_short as string,",
+				"          week_number as integer,",
+				"          week_long as string,",
+				"          month_in_quarter_number as string,",
+				"          month_in_year_short as string,",
+				"          month_in_year_long as string,",
+				"          week_wk_qtr_year as string,",
+				"          week_from_to as string,",
+				"          week_starting as string,",
+				"          week_wk_year_cont as string,",
+				"          week_wk_year as string,",
+				"          week_wk_qtr_year_cont as string,",
+				"          day_in_week_short as string,",
+				"          day_in_week_number as integer,",
+				"          day_in_week_long as string,",
+				"          month_short as string,",
+				"          month_number as string,",
+				"          month_long as string,",
+				"          quarter_short_us as string,",
+				"          year as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> DateDataDim",
+				"StgCustomerReview, OrderDim join(StgCustomerReview@ORDER_ID == OrderDim@ORDER_ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1, CustomerDim join(StgCustomerReview@CUSTOMER_ID == CustomerDim@customer_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2, LocationDim join(OrderDim@STORE_LOCATION_ID == LocationDim@STORE_LOCATION_ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3",
+				"join3, DateDataDim join(FEEDBACK_DATE == day_yyyy_mm_dd,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join4",
+				"join4 select(mapColumn(",
+				"          CUSTOMER_DIM_KEY,",
+				"          Location_Dim_Key,",
+				"          Date_Key,",
+				"          ORDER_ID = StgCustomerReview@ORDER_ID,",
+				"          FEEDBACK,",
+				"          FEEDBACK_DATE,",
+				"          RECOMENDED",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          customer_dim_key as long,",
+				"          location_dim_key as integer,",
+				"          date_key as integer,",
+				"          order_id as integer,",
+				"          feedback as string,",
+				"          feedback_date as date,",
+				"          recomended as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          customer_dim_key = CUSTOMER_DIM_KEY,",
+				"          location_dim_key = Location_Dim_Key,",
+				"          date_key = Date_Key,",
+				"          order_id = ORDER_ID,",
+				"          feedback = FEEDBACK,",
+				"          feedback_date = FEEDBACK_DATE,",
+				"          recomended = RECOMENDED",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

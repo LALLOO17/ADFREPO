@@ -1,0 +1,74 @@
+{
+	"name": "df_adls_TO_SqlServer_employees",
+	"properties": {
+		"folder": {
+			"name": "DataFlowMix"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_data_DataFlow_employees_csv",
+						"type": "DatasetReference"
+					},
+					"name": "dsdataDataFlowemployeescsv"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable_Param",
+						"type": "DatasetReference"
+					},
+					"name": "SinkSqlServerEmployees"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     TABLENAME as string",
+				"}",
+				"source(output(",
+				"          EMPLOYEE_ID as short,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as double,",
+				"          COMMISSION_PCT as double,",
+				"          MANAGER_ID as short,",
+				"          DEPARTMENT_ID as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> dsdataDataFlowemployeescsv",
+				"dsdataDataFlowemployeescsv cast(output(",
+				"          EMPLOYEE_ID as integer,",
+				"          HIRE_DATE as date,",
+				"          SALARY as decimal(10,2),",
+				"          COMMISSION_PCT as decimal(5,2),",
+				"          DEPARTMENT_ID as integer",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     partitionBy('hash', 1)) ~> SinkSqlServerEmployees"
+			]
+		}
+	}
+}

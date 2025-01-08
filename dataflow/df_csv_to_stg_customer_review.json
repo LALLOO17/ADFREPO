@@ -1,0 +1,56 @@
+{
+	"name": "df_csv_to_stg_customer_review",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText5",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableStg_customer_review",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          CUSTOMER_REVIEW_ID as integer,",
+				"          RATING_SCALE as decimal(5,2),",
+				"          FEEDBACK as string,",
+				"          FEEDBACK_DATE as date 'yyyy-MM-dd',",
+				"          RECOMENDED as string,",
+				"          CUSTOMER_ID as integer,",
+				"          ORDER_ID as integer,",
+				"          STORE_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

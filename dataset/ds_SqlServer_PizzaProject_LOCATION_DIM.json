@@ -1,0 +1,20 @@
+{
+	"name": "ds_SqlServer_PizzaProject_LOCATION_DIM",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureDataLakeGen2"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "LOCATION_DIM"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

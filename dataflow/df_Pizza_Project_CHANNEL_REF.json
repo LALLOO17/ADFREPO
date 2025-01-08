@@ -1,0 +1,82 @@
+{
+	"name": "df_Pizza_Project_CHANNEL_REF",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_STG_CHANNEL_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGCHANNEL"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_PizzaProject_CHANNEL_REF",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "surrogateKeyCHANNELREFKEY"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CHANNEL_ID as short,",
+				"          CHANNEL_TYPE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGCHANNEL",
+				"STGCHANNEL derive(CREATE_USER_DATE = currentUTC()) ~> derivedColumn1",
+				"derivedColumn1 keyGenerate(output(CHANNEL_REF_KEY as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeyCHANNELREFKEY",
+				"surrogateKeyCHANNELREFKEY select(mapColumn(",
+				"          CHANNEL_REF_KEY,",
+				"          CHANNEL_ID,",
+				"          CHANNEL_TYPE,",
+				"          CREATE_USER_DATE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 alterRow(upsertIf(1==1)) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['CHANNEL_ID'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CHANNEL_REF_KEY,",
+				"          CHANNEL_ID,",
+				"          CHANNEL_TYPE,",
+				"          CREATE_USER_DATE",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

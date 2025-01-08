@@ -1,0 +1,29 @@
+{
+	"name": "pip_Execute_Copy_SRC_to_Archive_CopytoSink_DeleteSourceFF",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pip_Copy_SRC_to_Archive_CopytoSink_DeleteSourceFF",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "PipeLineCopy"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-01-01T16:32:01Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

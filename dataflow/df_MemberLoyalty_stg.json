@@ -1,0 +1,59 @@
+{
+	"name": "df_MemberLoyalty_stg",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText4",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTablestg_member_loyalty",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          MEMBER_ID as integer,",
+				"          ORDER_DATE as date 'yyyy-MM-dd',",
+				"          INITIAL_POINTS_RECEIVED_DATE as date 'yyyy-MM-dd',",
+				"          INITIAL_REWARD_POINTS as integer,",
+				"          LAST_EARNED_POINTS as integer,",
+				"          TOTAL_POINTS_EARNED as integer,",
+				"          REMAINING_POINTS as integer,",
+				"          IS_ACTIVE as string,",
+				"          STORE_LOCATION_ID as integer,",
+				"          ORDER_ID as integer,",
+				"          CUSTOMER_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

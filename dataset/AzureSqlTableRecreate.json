@@ -1,0 +1,20 @@
+{
+	"name": "AzureSqlTableRecreate",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureDataBase"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "EMP_DEPT_NAME"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

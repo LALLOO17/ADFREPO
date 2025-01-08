@@ -1,0 +1,229 @@
+{
+	"name": "df_PizzaProject_LOCATION_DIM_SCD2",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_STG_STORE_LOCATION_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGSTORELOCATIONCSV"
+				},
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_STG_STATE_COUNTRY_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGSTATECOUNTRYcsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_SqlServer_PizzaProject_LOCATION_DIM",
+						"type": "DatasetReference"
+					},
+					"name": "sourceHrLocationDim"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_SqlServer_PizzaProject_LOCATION_DIM",
+						"type": "DatasetReference"
+					},
+					"name": "InsertLOCATIONDIM"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_SqlServer_PizzaProject_LOCATION_DIM",
+						"type": "DatasetReference"
+					},
+					"name": "UpdateLOCATIONDIM"
+				}
+			],
+			"transformations": [
+				{
+					"name": "InnerJoinStateCountryId"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "selectInsert"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "filterInsert"
+				},
+				{
+					"name": "filterUpdate"
+				},
+				{
+					"name": "alterRowInsert"
+				},
+				{
+					"name": "selectUpdate"
+				},
+				{
+					"name": "alterRowUpdate"
+				},
+				{
+					"name": "surrogateKey1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          STORE_LOCATION_ID as string,",
+				"          STORE_NAME as string,",
+				"          STORE_ADDRESS as string,",
+				"          STORE_PHONE_NUMBER as string,",
+				"          STORE_OPEN_TIME as string,",
+				"          STORE_CLOSE_TIME as string,",
+				"          STATE_COUNTRY_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGSTORELOCATIONCSV",
+				"source(output(",
+				"          STATE_COUNTRY_ID as string,",
+				"          STATE_NAME as string,",
+				"          STATE_ABBREVATION as string,",
+				"          STATE_COUNTRY as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGSTATECOUNTRYcsv",
+				"source(output(",
+				"          Location_Dim_Key as integer,",
+				"          STORE_LOCATION_ID as string,",
+				"          STORE_NAME as string,",
+				"          STORE_ADDRESS as string,",
+				"          STORE_PHONE_NUMBER as string,",
+				"          STATE_COUNTRY as string,",
+				"          STORE_OPEN_TIME as string,",
+				"          STORE_CLOSE_TIME as string,",
+				"          STATE_NAME as string,",
+				"          CREATE_USER_DATE as date,",
+				"          FLAG as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: '\\nselect * from hr.location_dim where FLAG = 1',",
+				"     format: 'query') ~> sourceHrLocationDim",
+				"STGSTORELOCATIONCSV, STGSTATECOUNTRYcsv join(STGSTORELOCATIONCSV@STATE_COUNTRY_ID == STGSTATECOUNTRYcsv@STATE_COUNTRY_ID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> InnerJoinStateCountryId",
+				"InnerJoinStateCountryId select(mapColumn(",
+				"          STORE_LOCATION_ID,",
+				"          STORE_NAME,",
+				"          STORE_ADDRESS,",
+				"          STORE_OPEN_TIME,",
+				"          STORE_CLOSE_TIME,",
+				"          STATE_NAME,",
+				"          STORE_PHONE_NUMBER,",
+				"          STATE_COUNTRY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"lookup1 derive(o_CREATE_USER_DATE = currentDate(),",
+				"          ActiveFlag = 1,",
+				"          InActive = 0,",
+				"          FLAG_I_U = iif(isNull(Location_Dim_Key), 'Insert',iif(select1@STORE_NAME !=sourceHrLocationDim@STORE_NAME ||  select1@STORE_ADDRESS  != sourceHrLocationDim@STORE_ADDRESS || select1@STORE_OPEN_TIME != sourceHrLocationDim@STORE_OPEN_TIME || select1@STORE_CLOSE_TIME != sourceHrLocationDim@STORE_CLOSE_TIME || select1@STORE_PHONE_NUMBER != sourceHrLocationDim@STORE_PHONE_NUMBER ,'Update','NC' ))) ~> derivedColumn1",
+				"filterInsert select(mapColumn(",
+				"          STORE_LOCATION_ID = select1@STORE_LOCATION_ID,",
+				"          STORE_NAME = select1@STORE_NAME,",
+				"          STORE_ADDRESS = select1@STORE_ADDRESS,",
+				"          STORE_PHONE_NUMBER = select1@STORE_PHONE_NUMBER,",
+				"          STATE_COUNTRY = select1@STATE_COUNTRY,",
+				"          STORE_OPEN_TIME = select1@STORE_OPEN_TIME,",
+				"          STORE_CLOSE_TIME = select1@STORE_CLOSE_TIME,",
+				"          STATE_NAME = select1@STATE_NAME,",
+				"          ActiveFlag,",
+				"          FLAG_I_U,",
+				"          FLAG,",
+				"          o_CREATE_USER_DATE,",
+				"          CREATE_USER_DATE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectInsert",
+				"select1, sourceHrLocationDim lookup(select1@STORE_LOCATION_ID == sourceHrLocationDim@STORE_LOCATION_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> lookup1",
+				"derivedColumn1 filter(FLAG_I_U == 'Insert' ||  FLAG_I_U == 'Update') ~> filterInsert",
+				"derivedColumn1 filter(FLAG_I_U == 'Update') ~> filterUpdate",
+				"selectInsert alterRow(insertIf(FLAG_I_U=='Insert'||FLAG_I_U=='Update')) ~> alterRowInsert",
+				"filterUpdate select(mapColumn(",
+				"          Location_Dim_Key,",
+				"          CREATE_USER_DATE,",
+				"          FLAG,",
+				"          o_CREATE_USER_DATE,",
+				"          InActive,",
+				"          FLAG_I_U",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectUpdate",
+				"selectUpdate alterRow(upsertIf(FLAG_I_U=='Update')) ~> alterRowUpdate",
+				"alterRowInsert keyGenerate(output(Location_Dim_Key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          Location_Dim_Key,",
+				"          STORE_LOCATION_ID,",
+				"          STORE_NAME,",
+				"          STORE_ADDRESS,",
+				"          STORE_PHONE_NUMBER,",
+				"          STATE_COUNTRY,",
+				"          STORE_OPEN_TIME,",
+				"          STORE_CLOSE_TIME,",
+				"          STATE_NAME,",
+				"          ActiveFlag,",
+				"          FLAG_I_U,",
+				"          FLAG,",
+				"          o_CREATE_USER_DATE,",
+				"          CREATE_USER_DATE",
+				"     )) ~> InsertLOCATIONDIM",
+				"alterRowUpdate sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['Location_Dim_Key'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 2,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          Location_Dim_Key,",
+				"          CREATE_USER_DATE = o_CREATE_USER_DATE,",
+				"          FLAG = InActive",
+				"     )) ~> UpdateLOCATIONDIM"
+			]
+		}
+	}
+}

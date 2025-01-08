@@ -1,0 +1,147 @@
+{
+	"name": "df_TeatingScd2",
+	"properties": {
+		"folder": {
+			"name": "DataFlowMix"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "data_SQLSERVER_SCD1_FF_csv",
+						"type": "DatasetReference"
+					},
+					"name": "Scd1FF"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableSCD2TESTING",
+						"type": "DatasetReference"
+					},
+					"name": "HRSCD1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableSCD2TESTING",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableSCD2TESTING",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "alterRow1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ID as short,",
+				"          NAME as string,",
+				"          SALARY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Scd1FF",
+				"source(output(",
+				"          SK_ID as integer,",
+				"          ID as integer,",
+				"          NAME as string,",
+				"          SALARY as decimal(10,2),",
+				"          FLAG as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> HRSCD1",
+				"Scd1FF, select1 lookup(ID == tgt_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 derive(ActiveFlag = 1,",
+				"          InActiveFlag = 0) ~> derivedColumn1",
+				"derivedColumn1 filter(!isNull(tgt_SK_ID)) ~> filter1",
+				"filter1 alterRow(updateIf(1==1)) ~> alterRow1",
+				"HRSCD1 select(mapColumn(",
+				"          tgt_SK_ID = SK_ID,",
+				"          tgt_ID = ID,",
+				"          tgt_NAME = NAME,",
+				"          tgt_SALARY = SALARY,",
+				"          tgt_FLAG = FLAG",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SK_ID as integer,",
+				"          ID as integer,",
+				"          NAME as string,",
+				"          SALARY as decimal(10,2),",
+				"          FLAG as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 2,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ID,",
+				"          NAME,",
+				"          SALARY,",
+				"          FLAG = ActiveFlag",
+				"     )) ~> sink1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SK_ID as integer,",
+				"          ID as integer,",
+				"          NAME as string,",
+				"          SALARY as decimal(10,2),",
+				"          FLAG as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['SK_ID'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          SK_ID = tgt_SK_ID,",
+				"          ID = tgt_ID,",
+				"          NAME = tgt_NAME,",
+				"          SALARY = tgt_SALARY,",
+				"          FLAG = InActiveFlag",
+				"     )) ~> sink2"
+			]
+		}
+	}
+}

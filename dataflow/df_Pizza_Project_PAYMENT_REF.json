@@ -1,0 +1,82 @@
+{
+	"name": "df_Pizza_Project_PAYMENT_REF",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_STG_PAYMENT_METHOD_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGPAYMENTMETHODcsv"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_SqlServer_PizzaProject_PAYMENT_REF",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "surrogateKeyPaymentRefKey"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PAYMENT_ID as integer,",
+				"          PAYMENT_TYPE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGPAYMENTMETHODcsv",
+				"STGPAYMENTMETHODcsv derive(USER_CREATE_DATE = currentUTC()) ~> derivedColumn1",
+				"derivedColumn1 keyGenerate(output(Payment_Ref_Key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeyPaymentRefKey",
+				"surrogateKeyPaymentRefKey select(mapColumn(",
+				"          Payment_Ref_Key,",
+				"          PAYMENT_ID,",
+				"          PAYMENT_TYPE,",
+				"          USER_CREATE_DATE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 alterRow(upsertIf(1==1)) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['PAYMENT_ID'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          Payment_Ref_Key,",
+				"          PAYMENT_ID,",
+				"          PAYMENT_TYPE,",
+				"          USER_CREATE_DATE",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

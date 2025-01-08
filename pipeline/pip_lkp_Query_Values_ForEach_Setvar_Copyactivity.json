@@ -1,0 +1,161 @@
+{
+	"name": "pip_lkp_Query_Values_ForEach_Setvar_Copyactivity",
+	"properties": {
+		"activities": [
+			{
+				"name": "LookupConfigDataset",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": "SELECT * FROM CONFIG where activeflag = 1\n",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"dataset": {
+						"referenceName": "Oracle_HR_ParamTableName",
+						"type": "DatasetReference",
+						"parameters": {
+							"SourceTableName": "countries"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEachConfigDataset",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LookupConfigDataset",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LookupConfigDataset').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data Config Dataset",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set variable1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "OracleSource",
+									"oracleReaderQuery": {
+										"value": "@item().query",
+										"type": "Expression"
+									},
+									"partitionOption": "None",
+									"convertDecimalToInteger": false,
+									"queryTimeout": "02:00:00"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Oracle_hr_param_Table",
+									"type": "DatasetReference",
+									"parameters": {
+										"DTSourceTableName": {
+											"value": "@item().sourcetable",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_data_DataFlow_ParamFileName",
+									"type": "DatasetReference",
+									"parameters": {
+										"DTTargetFilename": {
+											"value": "@concat(concat(item().targettable,variables('STARTDATE'),'_.csv'))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "STARTDATE",
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"STARTDATE": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "PipeLineCopy"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-01-01T16:32:01Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,71 @@
+{
+	"name": "df_PizzaProject_OrderLIneDim",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableOrderLineDim",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ORDER_LINE_ID as integer,",
+				"          UNIT_PRICE as double,",
+				"          QUANTITY as short,",
+				"          PROMOTION_AMOUNT as double,",
+				"          PROMOTION_ID as short,",
+				"          ORDER_ID as integer,",
+				"          PRODUCT_ID as short,",
+				"          PRODUCT_TOPPING_ID as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 cast(output(",
+				"          ORDER_LINE_ID as integer,",
+				"          UNIT_PRICE as decimal(5,2),",
+				"          QUANTITY as integer,",
+				"          PROMOTION_AMOUNT as decimal(5,2),",
+				"          PROMOTION_ID as integer,",
+				"          ORDER_ID as integer,",
+				"          PRODUCT_ID as integer,",
+				"          PRODUCT_TOPPING_ID as integer",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

@@ -1,0 +1,105 @@
+{
+	"name": "df_SelectCastAnalytical",
+	"properties": {
+		"folder": {
+			"name": "DataFlowMix"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds1_data_DataFlow_employees_csv",
+						"type": "DatasetReference"
+					},
+					"name": "SrcDataDataFlowEmployeesCsv"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "TGT_data_DataFlow_ParamFile",
+						"type": "DatasetReference"
+					},
+					"name": "DataDataFlowHrSchemaCsv"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as string,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as string,",
+				"          COMMISSION_PCT as string,",
+				"          MANAGER_ID as string,",
+				"          DEPARTMENT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrcDataDataFlowEmployeesCsv",
+				"SrcDataDataFlowEmployeesCsv cast(output(",
+				"          EMPLOYEE_ID as integer,",
+				"          SALARY as decimal(10,0),",
+				"          DEPARTMENT_ID as integer",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 aggregate(groupBy(DEPARTMENT_ID),",
+				"     SumOfSalary = sum(SALARY),",
+				"          MinOfSalary = min(SALARY),",
+				"          MaxOfSalary = max(SALARY),",
+				"          AvgOfSalary = round(avg(SALARY)),",
+				"          CountOfEmp = count(EMPLOYEE_ID)) ~> aggregate1",
+				"join1 sort(asc(aggregate1@DEPARTMENT_ID, true)) ~> sort1",
+				"aggregate1, cast1 join(aggregate1@DEPARTMENT_ID == cast1@DEPARTMENT_ID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"sort1 select(mapColumn(",
+				"          EMPLOYEE_ID,",
+				"          LAST_NAME,",
+				"          FIRST_NAME,",
+				"          SALARY,",
+				"          DEPARTMENT_ID = cast1@DEPARTMENT_ID,",
+				"          SumOfSalary,",
+				"          MinOfSalary,",
+				"          MaxOfSalary,",
+				"          AvgOfSalary,",
+				"          CountOfEmp",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['DepWiseAnalytical.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DataDataFlowHrSchemaCsv"
+			]
+		}
+	}
+}

@@ -1,0 +1,92 @@
+{
+	"name": "AzureSqlTableHrProductDimCopy",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureDataBase"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SURR_PRODUCT_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_PRICE",
+				"type": "decimal",
+				"precision": 5,
+				"scale": 2
+			},
+			{
+				"name": "IS_ACTIVE",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_CATEGORY_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_CATEGORY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_SUBCATEGORY_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_SUBCATEGORY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_SIZE",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_DESCRIPTION",
+				"type": "varchar"
+			},
+			{
+				"name": "EFF_START_DATE",
+				"type": "date"
+			},
+			{
+				"name": "EFF_END_DATE",
+				"type": "date"
+			},
+			{
+				"name": "FLAG",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CREATE_USER_DATE",
+				"type": "date"
+			},
+			{
+				"name": "MD5_CHECKSUM",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "PRODUCT_DIM_COPY"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

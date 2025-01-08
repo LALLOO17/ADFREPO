@@ -1,0 +1,40 @@
+{
+	"name": "p_Pizza_Project_SALES_FACT",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow Pizza Project Sales Fact",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_Pizza_Project_SALES_FACT",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "None",
+					"cacheSinks": {
+						"firstRowOnly": true
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "PizzaProject2024"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-01-02T19:51:37Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

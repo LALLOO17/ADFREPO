@@ -1,0 +1,104 @@
+{
+	"name": "AzureSqlTableHrSalesFact",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "order_line_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "order_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "customer_dim_key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "payment_ref_key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "channel_ref_key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "delivery_type_ref_key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "product_topping_dim_key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "location_dim_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SURR_PRODUCT_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "promotion_dim_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "date_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "order_date",
+				"type": "date"
+			},
+			{
+				"name": "order_status",
+				"type": "nvarchar"
+			},
+			{
+				"name": "quantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "unit_price",
+				"type": "decimal",
+				"precision": 5,
+				"scale": 2
+			},
+			{
+				"name": "toping_price",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "promotion_amount",
+				"type": "decimal",
+				"precision": 5,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "SALES_FACT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

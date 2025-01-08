@@ -1,0 +1,88 @@
+{
+	"name": "df_StgDate_DimDate",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableDateData",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableDateDateDim",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Date_Key as string,",
+				"          day_yyyy_mm_dd as string,",
+				"          day_us_mm_dd_yyyy as string,",
+				"          day_us_long as string,",
+				"          day_us_m_d_yy as string,",
+				"          week_short as string,",
+				"          week_number as string,",
+				"          week_long as string,",
+				"          month_in_quarter_number as string,",
+				"          month_in_year_short as string,",
+				"          month_in_year_long as string,",
+				"          week_wk_qtr_year as string,",
+				"          week_from_to as string,",
+				"          week_starting as string,",
+				"          week_wk_year_cont as string,",
+				"          week_wk_year as string,",
+				"          week_wk_qtr_year_cont as string,",
+				"          day_in_week_short as string,",
+				"          day_in_week_number as string,",
+				"          day_in_week_long as string,",
+				"          month_short as string,",
+				"          month_number as string,",
+				"          month_long as string,",
+				"          quarter_short_us as string,",
+				"          year as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 cast(output(",
+				"          Date_Key as integer,",
+				"          day_yyyy_mm_dd as date 'MM/dd/yyyy',",
+				"          day_us_mm_dd_yyyy as date 'MM/dd/yyyy',",
+				"          day_us_m_d_yy as date 'MM/dd/yyyy',",
+				"          week_number as integer,",
+				"          day_in_week_number as integer,",
+				"          year as integer",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

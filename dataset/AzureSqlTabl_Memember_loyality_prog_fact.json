@@ -1,0 +1,57 @@
+{
+	"name": "AzureSqlTabl_Memember_loyality_prog_fact",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "member_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "customer_dim_key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "location_dim_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "date_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "order_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "total_points_earned",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "remaining_points",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "is_active",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "member_loyality_prog_fact"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

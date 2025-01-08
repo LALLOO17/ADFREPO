@@ -1,0 +1,29 @@
+{
+	"name": "Oracle_hr_param_Table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkServiceOracle",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"DTSourceTableName": {
+				"type": "string",
+				"defaultValue": "EMPLOYEES"
+			}
+		},
+		"folder": {
+			"name": "OracleDataBase"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "hr",
+			"table": {
+				"value": "@dataset().DTSourceTableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,37 @@
+{
+	"name": "pip_df_ConditionalSplit",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_ConditionalSplit",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "DataFlowRun"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-12-28T16:04:25Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

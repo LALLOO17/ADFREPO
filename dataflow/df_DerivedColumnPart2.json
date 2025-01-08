@@ -1,0 +1,99 @@
+{
+	"name": "df_DerivedColumnPart2",
+	"properties": {
+		"folder": {
+			"name": "DataFlowMix"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_data_DataFlow_ADF_HRSCHEMA_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "TGT_data_DataFlowNew_ParamFileName",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as short,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as double,",
+				"          DEPARTMENT_ID as short,",
+				"          DEPARTMENT_NAME as string,",
+				"          CITY as string,",
+				"          STATE_PROVINCE as string,",
+				"          COUNTRY_NAME as string,",
+				"          REGION_NAME as string,",
+				"          JOB_TITLE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"select1 derive(Ph_NumberWithCountryCode = iif(REGION_NAME == 'Americas', concat('+1', replace(PHONE_NUMBER,'.','')), concat('+44', replace(PHONE_NUMBER,'.',''))),",
+				"          SalaryGrade = iif(SALARY > 10000 , 'Very Good', iif(SALARY >=7000 && SALARY <= 10000 ,'Good',iif(SALARY >7000 && SALARY <= 3000, 'Low','Very Low'))),",
+				"          Email_new = iif(DEPARTMENT_NAME == 'IT', concat(EMAIL, '@gmail.com'), iif(DEPARTMENT_NAME == 'Sales', concat(EMAIL,'@yahoo.com'),concat(EMAIL,'@unknown.com'))),",
+				"     partitionBy('hash', 1)) ~> derivedColumn1",
+				"source1 select(mapColumn(",
+				"          EMPLOYEE_ID,",
+				"          PHONE_NUMBER,",
+				"          SALARY,",
+				"          EMAIL,",
+				"          DEPARTMENT_NAME,",
+				"          REGION_NAME",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"derivedColumn1 select(mapColumn(",
+				"          EMPLOYEE_ID,",
+				"          EMAIL,",
+				"          Email_new,",
+				"          PHONE_NUMBER,",
+				"          Ph_NumberWithCountryCode,",
+				"          SALARY,",
+				"          SalaryGrade,",
+				"          DEPARTMENT_NAME,",
+				"          REGION_NAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['TGT_HRSCHEMA_PhCounrtyCode.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

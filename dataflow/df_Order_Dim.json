@@ -1,0 +1,79 @@
+{
+	"name": "df_Order_Dim",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText3",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableOrder_dim",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ORDER_ID as integer,",
+				"          ORDER_DATE as date 'yyyy-MM-dd',",
+				"          ORDER_STATUS as string,",
+				"          TOTAL_AMOUNT as string,",
+				"          TOTAL_TAX as string,",
+				"          TIPS as double,",
+				"          TOTAL_QUANTITY as short,",
+				"          DELIVERY_ID as short,",
+				"          CHANNEL_ID as short,",
+				"          STORE_LOCATION_ID as short,",
+				"          CUSTOMER_ID as short,",
+				"          PAYMENT_ID as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 cast(output(",
+				"          ORDER_ID as integer,",
+				"          ORDER_DATE as date 'yyyy-MM-dd',",
+				"          ORDER_STATUS as string,",
+				"          TOTAL_AMOUNT as decimal(5,2),",
+				"          TOTAL_TAX as decimal(5,2),",
+				"          TIPS as decimal(5,2),",
+				"          TOTAL_QUANTITY as integer,",
+				"          DELIVERY_ID as integer,",
+				"          CHANNEL_ID as integer,",
+				"          STORE_LOCATION_ID as integer,",
+				"          CUSTOMER_ID as integer,",
+				"          PAYMENT_ID as integer",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

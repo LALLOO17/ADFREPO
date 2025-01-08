@@ -1,0 +1,45 @@
+{
+	"name": "pip_df_Cast_Aggre_Sorter_SKkey_Rank",
+	"properties": {
+		"activities": [
+			{
+				"name": "df_HrSchema",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_SelectCastAggregator",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"DataDataFlowHrSchemaCsv": {
+								"DTTargetFileName": "abcd.csv"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "None",
+					"cacheSinks": {
+						"firstRowOnly": true
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "DataFlowRun"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-12-28T16:04:25Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

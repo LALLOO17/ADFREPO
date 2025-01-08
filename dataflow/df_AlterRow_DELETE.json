@@ -1,0 +1,135 @@
+{
+	"name": "df_AlterRow_DELETE",
+	"properties": {
+		"folder": {
+			"name": "DataFlowMix"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_data_DF_employeesnulldep_csv",
+						"type": "DatasetReference"
+					},
+					"name": "employeesnulldepcsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableRecreate",
+						"type": "DatasetReference"
+					},
+					"name": "dboEMPDEPTNAME"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableRecreate",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "alterRow1"
+				},
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as string,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as string,",
+				"          COMMISSION_PCT as string,",
+				"          MANAGER_ID as string,",
+				"          DEPARTMENT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> employeesnulldepcsv",
+				"source(output(",
+				"          EMPLOYEE_ID as integer,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as date,",
+				"          JOB_ID as string,",
+				"          SALARY as decimal(10,2),",
+				"          COMMISSION_PCT as decimal(5,2),",
+				"          MANAGER_ID as short,",
+				"          DEPARTMENT_ID as integer,",
+				"          DEPARTMENT_NAME as string,",
+				"          Filename as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dboEMPDEPTNAME",
+				"employeesnulldepcsv cast(output(",
+				"          EMPLOYEE_ID as integer,",
+				"          SALARY as decimal(10,2),",
+				"          COMMISSION_PCT as decimal(5,2),",
+				"          MANAGER_ID as integer,",
+				"          DEPARTMENT_ID as integer",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"join1 alterRow(deleteIf(isNull(cast1@EMPLOYEE_ID))) ~> alterRow1",
+				"cast1, dboEMPDEPTNAME join(cast1@EMPLOYEE_ID == dboEMPDEPTNAME@EMPLOYEE_ID,",
+				"     joinType:'right',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:true,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     keys:['EMPLOYEE_ID'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          EMPLOYEE_ID = dboEMPDEPTNAME@EMPLOYEE_ID,",
+				"          FIRST_NAME = employeesnulldepcsv@FIRST_NAME,",
+				"          LAST_NAME = employeesnulldepcsv@LAST_NAME,",
+				"          EMAIL = employeesnulldepcsv@EMAIL,",
+				"          PHONE_NUMBER = employeesnulldepcsv@PHONE_NUMBER,",
+				"          HIRE_DATE = employeesnulldepcsv@HIRE_DATE,",
+				"          JOB_ID = employeesnulldepcsv@JOB_ID,",
+				"          SALARY = cast1@SALARY,",
+				"          COMMISSION_PCT = cast1@COMMISSION_PCT,",
+				"          MANAGER_ID = cast1@MANAGER_ID,",
+				"          DEPARTMENT_ID = cast1@DEPARTMENT_ID,",
+				"          EMPLOYEE_ID = dboEMPDEPTNAME@EMPLOYEE_ID,",
+				"          FIRST_NAME = dboEMPDEPTNAME@FIRST_NAME,",
+				"          LAST_NAME = dboEMPDEPTNAME@LAST_NAME,",
+				"          EMAIL = dboEMPDEPTNAME@EMAIL,",
+				"          PHONE_NUMBER = dboEMPDEPTNAME@PHONE_NUMBER,",
+				"          HIRE_DATE = dboEMPDEPTNAME@HIRE_DATE,",
+				"          JOB_ID = dboEMPDEPTNAME@JOB_ID,",
+				"          SALARY = dboEMPDEPTNAME@SALARY,",
+				"          COMMISSION_PCT = dboEMPDEPTNAME@COMMISSION_PCT,",
+				"          MANAGER_ID = dboEMPDEPTNAME@MANAGER_ID,",
+				"          DEPARTMENT_ID = dboEMPDEPTNAME@DEPARTMENT_ID,",
+				"          DEPARTMENT_NAME,",
+				"          Filename",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

@@ -1,0 +1,88 @@
+{
+	"name": "pip_ApendVariable",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1 For Append Var",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Array2",
+					"value": {
+						"value": "@variables('Array1')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Append variable1",
+				"type": "AppendVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable1 For Append Var",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Array2",
+					"value": {
+						"value": "@int(5)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable2 Foe Append Var",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Append variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Array1",
+					"value": {
+						"value": "@variables('Array2')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"Array1": {
+				"type": "Array",
+				"defaultValue": [
+					1,
+					2,
+					3,
+					4
+				]
+			},
+			"Array2": {
+				"type": "Array"
+			}
+		},
+		"folder": {
+			"name": "PipeLineCopy"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-01-01T16:32:01Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,334 @@
+{
+	"name": "df_Pizza_Project_CustomerDim_LALLOO",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_CUSTOMERS_csv",
+						"type": "DatasetReference"
+					},
+					"name": "CUSTOMERScsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_CUSTOMERP_PHONR_NUMBER_csv",
+						"type": "DatasetReference"
+					},
+					"name": "CUSTOMERPPHONRNUMBERCSV"
+				},
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_STG_CUSTOMER_EMAIL_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGCUSTOMEREMAILcsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_STG_HUT_LOVER_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGHUTLOVERcsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_STG_CUSTOMER_ADDRESS_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGCUSTOMERADDRESS"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_SqlServer_CustomerDim",
+						"type": "DatasetReference"
+					},
+					"name": "dsSqlServerCustomerDim"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "join3"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "join4"
+				},
+				{
+					"name": "derivedColumnIIFAddress"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "AggCustPriSecEmail"
+				},
+				{
+					"name": "derivedColumn4"
+				},
+				{
+					"name": "AggPhoneNumber"
+				},
+				{
+					"name": "AggOfficeResidencyAddress"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "select3"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CUSTOMER_ID as short,",
+				"          CUSTOMER_FIRST_NAME as string,",
+				"          CUSTOMER_LAST_NAME as string,",
+				"          CUSTOMER_DOB as string,",
+				"          CUSTOMER_TYPE as string,",
+				"          IS_LOYAL as boolean,",
+				"          FIRST_PURCHASE_DATE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CUSTOMERScsv",
+				"source(output(",
+				"          CUSTOMER_PHONE_NUMBER_ID as short,",
+				"          CUSTOMER_PHONE_NUMBER as string,",
+				"          CUSTOMER_PHONE_TYPE as string,",
+				"          CUSTOMER_PHONE_STATUS as string,",
+				"          CUSTOMER_ID as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CUSTOMERPPHONRNUMBERCSV",
+				"source(output(",
+				"          CUSTOMER_EMAIL_ID as short,",
+				"          CUSTOMER_EMAIL as string,",
+				"          CUSTOMER_EMAIL_TYPE as string,",
+				"          CUSTOMER_EMAIL_STATUS as string,",
+				"          CUSTOMER_ID as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGCUSTOMEREMAILcsv",
+				"source(output(",
+				"          HUT_LOVERS_ID as short,",
+				"          JOINING_DATE as string,",
+				"          IS_ACTIVE as boolean,",
+				"          MEMBER_ID as short,",
+				"          CUSTMOER_ID as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGHUTLOVERcsv",
+				"source(output(",
+				"          CUSTOMER_ADDRESS_ID as short,",
+				"          ADDRESS_LANE1 as string,",
+				"          ADDRESS_LANE_2 as string,",
+				"          CITY_NAME as string,",
+				"          STATE_NAME as string,",
+				"          COUNTRY_NAME as string,",
+				"          ZIP_CODE as integer,",
+				"          GATE_CODE as short,",
+				"          ADDRESS_TYPE as string,",
+				"          ADDRESS_STATUS as string,",
+				"          CUSTOMER_ID as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGCUSTOMERADDRESS",
+				"select1, AggPhoneNumber join(select1@CUSTOMER_ID == AggPhoneNumber@CUSTOMER_ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1, AggCustPriSecEmail join(select1@CUSTOMER_ID == AggCustPriSecEmail@CUSTOMER_ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2, STGHUTLOVERcsv join(select1@CUSTOMER_ID == CUSTMOER_ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3",
+				"join4 derive(STG_CREATE_USER_ID = 'LALLOO_ETL',",
+				"          STG_CREATE_USER_DATE = currentUTC()) ~> derivedColumn1",
+				"CUSTOMERScsv select(mapColumn(",
+				"          CUSTOMER_ID,",
+				"          CUSTOMER_FIRST_NAME,",
+				"          CUSTOMER_LAST_NAME,",
+				"          IS_LOYAL",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"join3, AggOfficeResidencyAddress join(select1@CUSTOMER_ID == AggOfficeResidencyAddress@CUSTOMER_ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join4",
+				"STGCUSTOMERADDRESS derive(o_ADDRESS_LANE1 = iif(ADDRESS_TYPE == 'Office', ADDRESS_LANE1, toString(null())),",
+				"          o_ADDRESS_LANE_2 = iif(ADDRESS_TYPE == 'Office', ADDRESS_LANE_2, toString(null())),",
+				"          o_CITY_NAME = iif(ADDRESS_TYPE == 'Office', CITY_NAME, toString(null())),",
+				"          o_STATE_NAME = iif(ADDRESS_TYPE == 'Office', STATE_NAME, toString(null())),",
+				"          o_COUNTRY_NAME = iif(ADDRESS_TYPE == 'Office', COUNTRY_NAME, toString(null())),",
+				"          o_ZIP_CODE = iif(ADDRESS_TYPE == 'Office', ZIP_CODE, toInteger(null())),",
+				"          o_GATE_CODE = iif(ADDRESS_TYPE == 'Office', GATE_CODE,toShort(null())),",
+				"          r_ADDRESS_LANE1 = iif(ADDRESS_TYPE == 'Residential', ADDRESS_LANE1, toString(null())),",
+				"          r_ADDRESS_LANE_2 = iif(ADDRESS_TYPE == 'Residential', ADDRESS_LANE_2, toString(null())),",
+				"          r_CITY_NAME = iif(ADDRESS_TYPE == 'Residential', CITY_NAME, toString(null())),",
+				"          r_STATE_NAME = iif(ADDRESS_TYPE == 'Residential', STATE_NAME, toString(null())),",
+				"          r_COUNTRY_NAME = iif(ADDRESS_TYPE == 'Residential', COUNTRY_NAME, toString(null())),",
+				"          r_ZIP_CODE = iif(ADDRESS_TYPE == 'Residential', ZIP_CODE, toInteger(null())),",
+				"          r_GATE_CODE = iif(ADDRESS_TYPE == 'Residential', GATE_CODE, toShort(null()))) ~> derivedColumnIIFAddress",
+				"STGCUSTOMEREMAILcsv derive(Primary_EMAIL = iif(CUSTOMER_EMAIL_TYPE == 'Primary', CUSTOMER_EMAIL, toString(null())),",
+				"          Secondary_EMAIL = iif(CUSTOMER_EMAIL_TYPE == 'Secondary', CUSTOMER_EMAIL, toString(null()))) ~> derivedColumn3",
+				"derivedColumn3 aggregate(groupBy(CUSTOMER_ID),",
+				"     PrimaryEMAIL = max(Primary_EMAIL),",
+				"          SecondaryEMAIL = max(Secondary_EMAIL)) ~> AggCustPriSecEmail",
+				"CUSTOMERPPHONRNUMBERCSV derive(HOME_PHONE = iif(CUSTOMER_PHONE_TYPE == 'Home', CUSTOMER_PHONE_NUMBER, toString(null())),",
+				"          CELL_PHONE = iif(CUSTOMER_PHONE_TYPE == 'Cell', CUSTOMER_PHONE_NUMBER, toString(null()))) ~> derivedColumn4",
+				"derivedColumn4 aggregate(groupBy(CUSTOMER_ID),",
+				"     PRIMARY_PHONE_NUMBER = max(HOME_PHONE),",
+				"          SECONDARY_PHONE_NUMBER = max(CELL_PHONE)) ~> AggPhoneNumber",
+				"derivedColumnIIFAddress aggregate(groupBy(CUSTOMER_ID),",
+				"     Office_ADDRESS_LANE1 = max(o_ADDRESS_LANE1),",
+				"          Office_ADDRESS_LANE_2 = max(o_ADDRESS_LANE_2),",
+				"          Office_CITY_NAME = max(o_CITY_NAME),",
+				"          Office_STATE_NAME = max(o_STATE_NAME),",
+				"          Office_COUNTRY_NAME = max(o_COUNTRY_NAME),",
+				"          Office_ZIP_CODE = max(o_ZIP_CODE),",
+				"          Office_GATE_CODE = max(o_GATE_CODE),",
+				"          Residential_ADDRESS_LANE1 = max(r_ADDRESS_LANE1),",
+				"          Residential_ADDRESS_LANE_2 = max(r_ADDRESS_LANE_2),",
+				"          Residential_CITY_NAME = max(r_CITY_NAME),",
+				"          Residential_STATE_NAME = max(r_STATE_NAME),",
+				"          Residential_COUNTRY_NAME = max(r_COUNTRY_NAME),",
+				"          Residential_ZIP_CODE = max(r_ZIP_CODE),",
+				"          Residential_GATE_CODE = max(r_GATE_CODE)) ~> AggOfficeResidencyAddress",
+				"derivedColumn1 select(mapColumn(",
+				"          CUSTMOER_ID = select1@CUSTOMER_ID,",
+				"          CUSTOMER_FIRST_NAME,",
+				"          CUSTOMER_LAST_NAME,",
+				"          IS_LOYAL,",
+				"          PrimaryEMAIL,",
+				"          SecondaryEMAIL,",
+				"          PRIMARY_PHONE_NUMBER,",
+				"          SECONDARY_PHONE_NUMBER,",
+				"          Office_ADDRESS_LANE1,",
+				"          Office_ADDRESS_LANE_2,",
+				"          Office_CITY_NAME,",
+				"          Office_STATE_NAME,",
+				"          Office_COUNTRY_NAME,",
+				"          Office_ZIP_CODE,",
+				"          Office_GATE_CODE,",
+				"          Residential_ADDRESS_LANE1,",
+				"          Residential_ADDRESS_LANE_2,",
+				"          Residential_CITY_NAME,",
+				"          Residential_STATE_NAME,",
+				"          Residential_COUNTRY_NAME,",
+				"          Residential_ZIP_CODE,",
+				"          Residential_GATE_CODE,",
+				"          JOINING_DATE,",
+				"          STG_CREATE_USER_ID,",
+				"          STG_CREATE_USER_DATE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 keyGenerate(output(o_CUSTOMER_DIM_KEY as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 select(mapColumn(",
+				"          CUSTOMER_DIM_KEY = o_CUSTOMER_DIM_KEY,",
+				"          CUSTMOER_ID,",
+				"          CUSTOMER_FIRST_NAME,",
+				"          CUSTOMER_LAST_NAME,",
+				"          IS_LOYAL,",
+				"          PrimaryEMAIL,",
+				"          SecondaryEMAIL,",
+				"          PRIMARY_PHONE_NUMBER,",
+				"          SECONDARY_PHONE_NUMBER,",
+				"          Office_ADDRESS_LANE1,",
+				"          Office_ADDRESS_LANE_2,",
+				"          Office_CITY_NAME,",
+				"          Office_STATE_NAME,",
+				"          Office_COUNTRY_NAME,",
+				"          Office_ZIP_CODE,",
+				"          Office_GATE_CODE,",
+				"          Residential_ADDRESS_LANE1,",
+				"          Residential_ADDRESS_LANE_2,",
+				"          Residential_CITY_NAME,",
+				"          Residential_STATE_NAME,",
+				"          Residential_COUNTRY_NAME,",
+				"          Residential_ZIP_CODE,",
+				"          Residential_GATE_CODE,",
+				"          JOINING_DATE,",
+				"          STG_CREATE_USER_ID,",
+				"          STG_CREATE_USER_DATE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"select3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CUSTOMER_DIM_KEY,",
+				"          CUSTMOER_ID,",
+				"          CUSTOMER_FIRST_NAME,",
+				"          CUSTOMER_LAST_NAME,",
+				"          IS_LOYAL,",
+				"          PrimaryEMAIL,",
+				"          SecondaryEMAIL,",
+				"          PRIMARY_PHONE_NUMBER,",
+				"          SECONDARY_PHONE_NUMBER,",
+				"          Office_ADDRESS_LANE1,",
+				"          Office_ADDRESS_LANE_2,",
+				"          Office_CITY_NAME,",
+				"          Office_STATE_NAME,",
+				"          Office_COUNTRY_NAME,",
+				"          Office_ZIP_CODE,",
+				"          Office_GATE_CODE,",
+				"          Residential_ADDRESS_LANE1,",
+				"          Residential_ADDRESS_LANE_2,",
+				"          Residential_CITY_NAME,",
+				"          Residential_STATE_NAME,",
+				"          Residential_COUNTRY_NAME,",
+				"          Residential_ZIP_CODE,",
+				"          Residential_GATE_CODE,",
+				"          JOINING_DATE,",
+				"          STG_CREATE_USER_ID,",
+				"          STG_CREATE_USER_DATE",
+				"     )) ~> dsSqlServerCustomerDim"
+			]
+		}
+	}
+}

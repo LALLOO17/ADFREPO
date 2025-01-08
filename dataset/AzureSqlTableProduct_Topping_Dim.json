@@ -1,0 +1,58 @@
+{
+	"name": "AzureSqlTableProduct_Topping_Dim",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Product_Topping_Dim_Key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PRODUCT_TOPPING_ID",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "TOPPING_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOPING_PRICE",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "IS_ACTIVE",
+				"type": "bit"
+			},
+			{
+				"name": "EFFECTIVE_DATE",
+				"type": "date"
+			},
+			{
+				"name": "END_DATE",
+				"type": "date"
+			},
+			{
+				"name": "FLAG",
+				"type": "varchar"
+			},
+			{
+				"name": "USER_CREATE_DATE",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "PRODUCT_TOPPINGS_DIM"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

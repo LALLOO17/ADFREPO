@@ -1,0 +1,78 @@
+{
+	"name": "pip_Copy_OracleHR_to_OracleTGTHR",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data OracleHR to OracleTGTHR",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "OracleSink",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Oracle_Param_Schema_Param_Table",
+						"type": "DatasetReference",
+						"parameters": {
+							"SourceTableName": {
+								"value": "@pipeline().parameters.PipeSouceTableName",
+								"type": "Expression"
+							},
+							"SchemaName": "HR"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Oracle_HR_ParamTableName",
+						"type": "DatasetReference",
+						"parameters": {
+							"SourceTableName": "countries"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"PipeSouceTableName": {
+				"type": "string",
+				"defaultValue": "EMPLOYEES"
+			},
+			"PipeTargetTableName": {
+				"type": "string",
+				"defaultValue": "TGT_EMPLOYEES"
+			}
+		},
+		"folder": {
+			"name": "PipeLineCopy"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-01-01T16:32:01Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

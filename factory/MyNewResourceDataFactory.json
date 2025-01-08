@@ -1,0 +1,9 @@
+{
+	"name": "MyNewResourceDataFactory",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "23a1b739-6949-4604-a75f-a6b8a85f3118",
+		"tenantId": "2405f9bb-5533-41c3-bd0f-016b826664af"
+	}
+}

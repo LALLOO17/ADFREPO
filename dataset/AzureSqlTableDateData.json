@@ -1,0 +1,118 @@
+{
+	"name": "AzureSqlTableDateData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Date_Key",
+				"type": "nvarchar"
+			},
+			{
+				"name": "day_yyyy_mm_dd",
+				"type": "nvarchar"
+			},
+			{
+				"name": "day_us_mm_dd_yyyy",
+				"type": "nvarchar"
+			},
+			{
+				"name": "day_us_long",
+				"type": "nvarchar"
+			},
+			{
+				"name": "day_us_m_d_yy",
+				"type": "nvarchar"
+			},
+			{
+				"name": "week_short",
+				"type": "nvarchar"
+			},
+			{
+				"name": "week_number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "week_long",
+				"type": "nvarchar"
+			},
+			{
+				"name": "month_in_quarter_number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "month_in_year_short",
+				"type": "nvarchar"
+			},
+			{
+				"name": "month_in_year_long",
+				"type": "nvarchar"
+			},
+			{
+				"name": "week_wk_qtr_year",
+				"type": "nvarchar"
+			},
+			{
+				"name": "week_from_to",
+				"type": "nvarchar"
+			},
+			{
+				"name": "week_starting",
+				"type": "nvarchar"
+			},
+			{
+				"name": "week_wk_year_cont",
+				"type": "nvarchar"
+			},
+			{
+				"name": "week_wk_year",
+				"type": "nvarchar"
+			},
+			{
+				"name": "week_wk_qtr_year_cont",
+				"type": "nvarchar"
+			},
+			{
+				"name": "day_in_week_short",
+				"type": "nvarchar"
+			},
+			{
+				"name": "day_in_week_number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "day_in_week_long",
+				"type": "nvarchar"
+			},
+			{
+				"name": "month_short",
+				"type": "nvarchar"
+			},
+			{
+				"name": "month_number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "month_long",
+				"type": "nvarchar"
+			},
+			{
+				"name": "quarter_short_us",
+				"type": "nvarchar"
+			},
+			{
+				"name": "year",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "date_data"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

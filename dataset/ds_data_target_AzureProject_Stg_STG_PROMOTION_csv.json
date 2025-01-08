@@ -1,0 +1,53 @@
+{
+	"name": "ds_data_target_AzureProject_Stg_STG_PROMOTION_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyNewLinkService",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureDataLakeGen2"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "STG_PROMOTIONS.csv",
+				"folderPath": "target/AzureProject/Stg",
+				"fileSystem": "data"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PROMOTION_ID",
+				"type": "String"
+			},
+			{
+				"name": "PROMOTION_NAME",
+				"type": "String"
+			},
+			{
+				"name": "PROMOTION_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "DISCOUNT_AMOUNT",
+				"type": "String"
+			},
+			{
+				"name": "START_DATE",
+				"type": "String"
+			},
+			{
+				"name": "END_DATE",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

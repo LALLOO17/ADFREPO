@@ -1,0 +1,40 @@
+{
+	"name": "p_Pizza_Project_customer_review_fact",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow Customer Review Fact",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_Pizza_Project_customer_review_fact",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "None",
+					"cacheSinks": {
+						"firstRowOnly": true
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "PizzaProject2024"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-01-02T22:52:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

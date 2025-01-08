@@ -1,0 +1,78 @@
+{
+	"name": "df_Agregate",
+	"properties": {
+		"folder": {
+			"name": "DataFlowMix"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_data_source_HrSchema_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_data_DataFlow_ParamFileName",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as string,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as string,",
+				"          DEPARTMENT_ID as string,",
+				"          DEPARTMENT_NAME as string,",
+				"          CITY as string,",
+				"          STATE_PROVINCE as string,",
+				"          COUNTRY_NAME as string,",
+				"          REGION_NAME as string,",
+				"          JOB_TITLE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 cast(output(",
+				"          EMPLOYEE_ID as integer '000',",
+				"          SALARY as integer '000',",
+				"          DEPARTMENT_ID as integer '000'",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 aggregate(groupBy(DEPARTMENT_ID),",
+				"     SumOfSalDepWise = sum(SALARY),",
+				"          AvgOfSalDepWise = round(avg(SALARY)),",
+				"          MinOfSalDepWise = round(min(SALARY)),",
+				"          MaxOfSalDepWise = round(max(SALARY)),",
+				"          CountDistEmpDepWise = countDistinct(EMPLOYEE_ID)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['HrSchemDepSumSal.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

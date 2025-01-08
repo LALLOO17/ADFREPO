@@ -1,0 +1,17 @@
+{
+	"name": "AzureSqlTablestg_member_loyalty",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "hr",
+			"table": "stg_member_loyalty"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

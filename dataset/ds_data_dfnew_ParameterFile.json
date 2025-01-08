@@ -1,0 +1,37 @@
+{
+	"name": "ds_data_dfnew_ParameterFile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyNewLinkService",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TARGETFILENAME": {
+				"type": "string",
+				"defaultValue": "targetfilename.csv"
+			}
+		},
+		"folder": {
+			"name": "AzureDataLakeGen2"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().TARGETFILENAME,'.csv')",
+					"type": "Expression"
+				},
+				"folderPath": "DFNEW",
+				"fileSystem": "data"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

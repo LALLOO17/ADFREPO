@@ -1,0 +1,76 @@
+{
+	"name": "df_Pizza_Project_DELIVERY_TYPE_REF_KEY",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_STG_DELIVERY_METHOD_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGDELIVERYMETHOD"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_SqlServer_PizzaProject_DELIVERY_TYPE_REF",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "surrogateKeyDELIVERYTYPEREFKEY"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          DELIVERY_ID as string,",
+				"          DELIVERY_TYPE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGDELIVERYMETHOD",
+				"STGDELIVERYMETHOD derive(CREATE_USER_DATE = currentUTC()) ~> derivedColumn1",
+				"derivedColumn1 keyGenerate(output(DELIVERY_TYPE_REF_KEY as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeyDELIVERYTYPEREFKEY",
+				"surrogateKeyDELIVERYTYPEREFKEY select(mapColumn(",
+				"          DELIVERY_TYPE_REF_KEY,",
+				"          DELIVERY_ID,",
+				"          DELIVERY_TYPE,",
+				"          CREATE_USER_DATE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 alterRow(upsertIf(1==1)) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['DELIVERY_ID'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

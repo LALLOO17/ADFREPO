@@ -1,0 +1,152 @@
+{
+	"name": "df_PizzaProjectQuerySCD3_HR_PROMOTION_DIM",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableStgPromotion",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableHrPromotionDim",
+						"type": "DatasetReference"
+					},
+					"name": "InsertHrPromotionDim"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableHrPromotionDim",
+						"type": "DatasetReference"
+					},
+					"name": "UpdateHrPromotionDim"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filterUpdate"
+				},
+				{
+					"name": "filterInsert"
+				},
+				{
+					"name": "alterRow1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SRC_PROMOTION_ID as integer,",
+				"          SRC_PROMOTION_NAME as string,",
+				"          SRC_PROMOTION_TYPE as string,",
+				"          SRC_DISCOUNT_AMOUNT as string,",
+				"          SRC_START_DATE as date,",
+				"          SRC_END_DATE as date,",
+				"          TGT_PROMOTION_DIM_KEY as integer,",
+				"          TGT_PROMOTION_ID as integer,",
+				"          TGT_PROMOTION_NAME as string,",
+				"          TGT_PREVIOUS_PROMOTION_NAME as string,",
+				"          TGT_PROMOTION_TYPE as string,",
+				"          TGT_PREVIOUS_PROMOTION_TYPE as string,",
+				"          TGT_PREVIOUS_DISCOUNT_AMOUNT as string,",
+				"          TGT_START_DATE as date,",
+				"          TGT_PREVIOUS_START_DATE as date,",
+				"          TGT_END_DATE as date,",
+				"          TGT_PREVIOUS_END_DATE as date,",
+				"          TGT_CREATE_USER_DATE as date,",
+				"          FLAG_UPDATE as string,",
+				"          FLAG_INSERT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: '\\r\\nSELECT                \\r\\nP1.PROMOTION_ID     AS SRC_PROMOTION_ID ,\\r\\nP1.PROMOTION_NAME     AS SRC_PROMOTION_NAME,\\r\\nP1.PROMOTION_TYPE     AS SRC_PROMOTION_TYPE,\\r\\nP1.DISCOUNT_AMOUNT     AS SRC_DISCOUNT_AMOUNT,\\r\\nP1.START_DATE     AS SRC_START_DATE,\\r\\nP1.END_DATE    AS SRC_END_DATE,\\r\\nP2.PROMOTION_DIM_KEY AS TGT_PROMOTION_DIM_KEY ,     \\r\\nP2.PROMOTION_ID     AS TGT_PROMOTION_ID ,\\r\\nP2.PROMOTION_NAME     AS TGT_PROMOTION_NAME,\\r\\nP2.PREVIOUS_PROMOTION_NAME     AS TGT_PREVIOUS_PROMOTION_NAME ,\\r\\nP2.PROMOTION_TYPE AS TGT_PROMOTION_TYPE,\\r\\nP2.PREVIOUS_PROMOTION_TYPE      AS TGT_PREVIOUS_PROMOTION_TYPE ,\\r\\nP2.PREVIOUS_DISCOUNT_AMOUNT     AS TGT_PREVIOUS_DISCOUNT_AMOUNT     ,\\r\\nP2.START_DATE     AS TGT_START_DATE     ,\\r\\nP2.PREVIOUS_START_DATE     AS TGT_PREVIOUS_START_DATE,\\r\\nP2.END_DATE     AS TGT_END_DATE ,\\r\\nP2.PREVIOUS_END_DATE     AS TGT_PREVIOUS_END_DATE,\\r\\nP2.CREATE_USER_DATE AS TGT_CREATE_USER_DATE,\\r\\nCASE WHEN P2.PROMOTION_ID IS NOT NULL AND (P1.PROMOTION_NAME <> P2.PROMOTION_NAME OR  P1.PROMOTION_TYPE <> P2.PROMOTION_TYPE \\r\\nOR P1.DISCOUNT_AMOUNT <> P2.DISCOUNT_AMOUNT\\r\\n)THEN \\'U\\' ELSE \\'N\\' END FLAG_UPDATE,\\r\\nCASE WHEN P2.PROMOTION_ID IS  NULL THEN \\'I\\' ELSE \\'N\\' END FLAG_INSERT\\r\\nFROM HR.STG_PROMOTION P1\\r\\nLEFT JOIN HR.PROMOTION_DIM P2\\r\\nON P1.PROMOTION_ID = P2.PROMOTION_ID',",
+				"     format: 'query') ~> source1",
+				"source1 filter(FLAG_UPDATE == 'U') ~> filterUpdate",
+				"source1 filter(FLAG_INSERT == 'I') ~> filterInsert",
+				"filterUpdate alterRow(updateIf(1==1)) ~> alterRow1",
+				"filterInsert derive(o_Create_user_date = currentDate()) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PROMOTION_DIM_KEY as integer,",
+				"          PROMOTION_ID as integer,",
+				"          PROMOTION_NAME as string,",
+				"          PREVIOUS_PROMOTION_NAME as string,",
+				"          PROMOTION_TYPE as string,",
+				"          PREVIOUS_PROMOTION_TYPE as string,",
+				"          DISCOUNT_AMOUNT as string,",
+				"          PREVIOUS_DISCOUNT_AMOUNT as string,",
+				"          START_DATE as date,",
+				"          PREVIOUS_START_DATE as date,",
+				"          END_DATE as date,",
+				"          PREVIOUS_END_DATE as date,",
+				"          CREATE_USER_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          PROMOTION_ID = SRC_PROMOTION_ID,",
+				"          PROMOTION_NAME = SRC_PROMOTION_NAME,",
+				"          PROMOTION_TYPE = SRC_PROMOTION_TYPE,",
+				"          DISCOUNT_AMOUNT = SRC_DISCOUNT_AMOUNT,",
+				"          START_DATE = SRC_START_DATE,",
+				"          END_DATE = SRC_END_DATE,",
+				"          CREATE_USER_DATE = o_Create_user_date",
+				"     )) ~> InsertHrPromotionDim",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PROMOTION_DIM_KEY as integer,",
+				"          PROMOTION_ID as integer,",
+				"          PROMOTION_NAME as string,",
+				"          PREVIOUS_PROMOTION_NAME as string,",
+				"          PROMOTION_TYPE as string,",
+				"          PREVIOUS_PROMOTION_TYPE as string,",
+				"          DISCOUNT_AMOUNT as string,",
+				"          PREVIOUS_DISCOUNT_AMOUNT as string,",
+				"          START_DATE as date,",
+				"          PREVIOUS_START_DATE as date,",
+				"          END_DATE as date,",
+				"          PREVIOUS_END_DATE as date,",
+				"          CREATE_USER_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['PROMOTION_DIM_KEY'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          PROMOTION_DIM_KEY = TGT_PROMOTION_DIM_KEY,",
+				"          PREVIOUS_PROMOTION_NAME = SRC_PROMOTION_NAME,",
+				"          PREVIOUS_PROMOTION_TYPE = SRC_PROMOTION_TYPE,",
+				"          PREVIOUS_DISCOUNT_AMOUNT = SRC_DISCOUNT_AMOUNT,",
+				"          PREVIOUS_START_DATE = SRC_START_DATE,",
+				"          PREVIOUS_END_DATE = SRC_END_DATE,",
+				"          CREATE_USER_DATE = TGT_CREATE_USER_DATE",
+				"     )) ~> UpdateHrPromotionDim"
+			]
+		}
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"name": "Oracle_HR_ParamTableName",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkServiceOracle",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SourceTableName": {
+				"type": "string",
+				"defaultValue": "countries"
+			}
+		},
+		"folder": {
+			"name": "OracleDataBase"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "HR",
+			"table": {
+				"value": "@dataset().SourceTableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

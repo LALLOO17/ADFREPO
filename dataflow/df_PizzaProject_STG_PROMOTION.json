@@ -1,0 +1,76 @@
+{
+	"name": "df_PizzaProject_STG_PROMOTION",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_data_target_AzureProject_Stg_STG_PROMOTION_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGPROMOTIONcsv"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTableStgPromotion",
+						"type": "DatasetReference"
+					},
+					"name": "SqlServerStgPromotion"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PROMOTION_ID as short,",
+				"          PROMOTION_NAME as string,",
+				"          PROMOTION_TYPE as string,",
+				"          DISCOUNT_AMOUNT as string,",
+				"          START_DATE as string,",
+				"          END_DATE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGPROMOTIONcsv",
+				"STGPROMOTIONcsv derive(o_START_DATE = toDate(START_DATE, 'yyyy-MM-dd','en-US'),",
+				"          o_END_DATE = toDate(END_DATE, 'yyyy-MM-dd','en-US')) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Promotion_ID as integer,",
+				"          Promotion_Name as string,",
+				"          Promotion_Type as string,",
+				"          Discount_amount as decimal(5,2),",
+				"          START_DATE as date,",
+				"          END_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          Promotion_ID = PROMOTION_ID,",
+				"          Promotion_Name = PROMOTION_NAME,",
+				"          Promotion_Type = PROMOTION_TYPE,",
+				"          Discount_amount = DISCOUNT_AMOUNT,",
+				"          START_DATE = o_START_DATE,",
+				"          END_DATE = o_END_DATE",
+				"     )) ~> SqlServerStgPromotion"
+			]
+		}
+	}
+}

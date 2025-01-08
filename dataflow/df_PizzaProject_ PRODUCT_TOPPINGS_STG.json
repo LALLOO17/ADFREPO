@@ -1,0 +1,77 @@
+{
+	"name": "df_PizzaProject_ PRODUCT_TOPPINGS_STG",
+	"properties": {
+		"folder": {
+			"name": "PizzaProject2024/DimDF"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "data_target_AzureProject_Stg_STG_PRODUCT_TOPPINGS_csv",
+						"type": "DatasetReference"
+					},
+					"name": "STGPRODUCTTOPPINGScsv"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_SqlServer_PizzaProject_PRODUCT_TOPPINGS_STG",
+						"type": "DatasetReference"
+					},
+					"name": "PRODUCTTOPPINGSDIM"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumnCreateUserUpadateDate"
+				},
+				{
+					"name": "SurrogateKeyProductToppingDimKey"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PRODUCT_TOPPING_ID as short,",
+				"          TOPPING_NAME as string,",
+				"          TOPING_PRICE as string,",
+				"          IS_ACTIVE as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> STGPRODUCTTOPPINGScsv",
+				"STGPRODUCTTOPPINGScsv derive(CREATE_USER_DATE = currentUTC(),",
+				"          {o_Tooping_Price } = toDecimal(replace(TOPING_PRICE, '$', ''))) ~> derivedColumnCreateUserUpadateDate",
+				"derivedColumnCreateUserUpadateDate keyGenerate(output(Product_Topping_Dim_Key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> SurrogateKeyProductToppingDimKey",
+				"SurrogateKeyProductToppingDimKey select(mapColumn(",
+				"          Product_Topping_Dim_Key,",
+				"          PRODUCT_TOPPING_ID,",
+				"          TOPPING_NAME,",
+				"          TOPING_PRICE = {o_Tooping_Price },",
+				"          IS_ACTIVE,",
+				"          CREATE_DATE = CREATE_USER_DATE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> PRODUCTTOPPINGSDIM"
+			]
+		}
+	}
+}

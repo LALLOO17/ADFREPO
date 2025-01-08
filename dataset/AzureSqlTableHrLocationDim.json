@@ -1,0 +1,62 @@
+{
+	"name": "AzureSqlTableHrLocationDim",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureDataBase"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Location_Dim_Key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "STORE_LOCATION_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_PHONE_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_COUNTRY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_OPEN_TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_CLOSE_TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATE_USER_DATE",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "HR",
+			"table": "LOCATION_DIM"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

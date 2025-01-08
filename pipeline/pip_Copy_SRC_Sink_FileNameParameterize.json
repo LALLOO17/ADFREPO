@@ -1,0 +1,87 @@
+{
+	"name": "pip_Copy_SRC_Sink_FileNameParameterize",
+	"properties": {
+		"activities": [
+			{
+				"name": "NewSimpleCopyDataActivity",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SRC_data_source_Month_Of_11_as_November_csv",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_data_target_ParamFileName",
+						"type": "DatasetReference",
+						"parameters": {
+							"DSTargetFileName": {
+								"value": "@pipeline().parameters.PipeTargetFilename",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"PipeSourceFileName": {
+				"type": "string",
+				"defaultValue": "Month_Of_11 as _November.csv"
+			},
+			"PipeTargetFilename": {
+				"type": "string",
+				"defaultValue": "LALU.CSV"
+			}
+		},
+		"folder": {
+			"name": "PipeLineCopy"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-01-08T16:55:58Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
