@@ -5,7 +5,14 @@
 			{
 				"name": "Set variable1 For Append Var",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1 For Append Var_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"secureOutput": false,
 					"secureInput": false
@@ -59,6 +66,23 @@
 					"variableName": "Array1",
 					"value": {
 						"value": "@variables('Array2')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable1 For Append Var_copy1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Array2",
+					"value": {
+						"value": "@variables('Array1')",
 						"type": "Expression"
 					}
 				}
