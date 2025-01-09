@@ -1,0 +1,1219 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "MyNewResourceDataFactory"
+		},
+		"AzureSqlDatabase1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSqlDatabase1'"
+		},
+		"MyNewLinkService_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'MyNewLinkService'"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "azuresqlserver11192024.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AzureSqlDataBase"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "kartavya"
+		},
+		"MyNewLinkService_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://lalloonewstorageaccount.dfs.core.windows.net/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pip_ApendVariable')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1 For Append Var",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set variable1 For Append Var_copy1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Array2",
+							"value": {
+								"value": "@variables('Array1')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Append variable1",
+						"type": "AppendVariable",
+						"dependsOn": [
+							{
+								"activity": "Set variable1 For Append Var",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Array2",
+							"value": {
+								"value": "@int(5)",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable2 Foe Append Var",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Append variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Array1",
+							"value": {
+								"value": "@variables('Array2')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable1 For Append Var_copy1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Array2",
+							"value": {
+								"value": "@variables('Array1')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"Array1": {
+						"type": "Array",
+						"defaultValue": [
+							1,
+							2,
+							3,
+							4
+						]
+					},
+					"Array2": {
+						"type": "Array"
+					}
+				},
+				"folder": {
+					"name": "PipeLineCopy"
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-01-01T16:32:01Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pip_ApendVariable_Clone')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1 For Append Var",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set variable1 For Append Var_copy1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Array2",
+							"value": {
+								"value": "@variables('Array1')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Append variable1",
+						"type": "AppendVariable",
+						"dependsOn": [
+							{
+								"activity": "Set variable1 For Append Var",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Array2",
+							"value": {
+								"value": "@int(5)",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable2 Foe Append Var",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Append variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Array1",
+							"value": {
+								"value": "@variables('Array2')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable1 For Append Var_copy1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Array2",
+							"value": {
+								"value": "@variables('Array1')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"Array1": {
+						"type": "Array",
+						"defaultValue": [
+							1,
+							2,
+							3,
+							4
+						]
+					},
+					"Array2": {
+						"type": "Array"
+					}
+				},
+				"folder": {
+					"name": "PipeLineCopy"
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-01-01T16:32:01Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pip_Setvar1_AppendVariable_Setvar2_Setvar3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "ArrayVar1",
+							"value": {
+								"value": "@variables('Arrayvar')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable2",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Append variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "ArrayVar1",
+							"value": {
+								"value": "@variables('Arrayvar')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Append variable1",
+						"type": "AppendVariable",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Arrayvar",
+							"value": {
+								"value": "@int(5)",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable3",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set variable2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "var3",
+							"value": {
+								"value": "@{variables('ArrayVar1')[0]}",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"Arrayvar": {
+						"type": "Array",
+						"defaultValue": [
+							1,
+							2,
+							3,
+							4
+						]
+					},
+					"ArrayVar1": {
+						"type": "Array"
+					},
+					"var3": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "PipeLineCopy"
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-01-01T16:32:01Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]",
+					"database": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('AzureSqlDatabase1_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MyNewLinkService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('MyNewLinkService_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('MyNewLinkService_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SelfHostedIntegrationRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTabl_Memember_loyality_prog_fact')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "member_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "customer_dim_key",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "location_dim_key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "date_key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "order_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "total_points_earned",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "remaining_points",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "is_active",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "member_loyality_prog_fact"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "AzureDataBase"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "CUSTOMER_DIM"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "AzureDataBase"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "SALARY",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					}
+				],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "SCD1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableCDC_SRC')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "name",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "SRC_CDC"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableDateData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Date_Key",
+						"type": "nvarchar"
+					},
+					{
+						"name": "day_yyyy_mm_dd",
+						"type": "nvarchar"
+					},
+					{
+						"name": "day_us_mm_dd_yyyy",
+						"type": "nvarchar"
+					},
+					{
+						"name": "day_us_long",
+						"type": "nvarchar"
+					},
+					{
+						"name": "day_us_m_d_yy",
+						"type": "nvarchar"
+					},
+					{
+						"name": "week_short",
+						"type": "nvarchar"
+					},
+					{
+						"name": "week_number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "week_long",
+						"type": "nvarchar"
+					},
+					{
+						"name": "month_in_quarter_number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "month_in_year_short",
+						"type": "nvarchar"
+					},
+					{
+						"name": "month_in_year_long",
+						"type": "nvarchar"
+					},
+					{
+						"name": "week_wk_qtr_year",
+						"type": "nvarchar"
+					},
+					{
+						"name": "week_from_to",
+						"type": "nvarchar"
+					},
+					{
+						"name": "week_starting",
+						"type": "nvarchar"
+					},
+					{
+						"name": "week_wk_year_cont",
+						"type": "nvarchar"
+					},
+					{
+						"name": "week_wk_year",
+						"type": "nvarchar"
+					},
+					{
+						"name": "week_wk_qtr_year_cont",
+						"type": "nvarchar"
+					},
+					{
+						"name": "day_in_week_short",
+						"type": "nvarchar"
+					},
+					{
+						"name": "day_in_week_number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "day_in_week_long",
+						"type": "nvarchar"
+					},
+					{
+						"name": "month_short",
+						"type": "nvarchar"
+					},
+					{
+						"name": "month_number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "month_long",
+						"type": "nvarchar"
+					},
+					{
+						"name": "quarter_short_us",
+						"type": "nvarchar"
+					},
+					{
+						"name": "year",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "date_data"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableDateDateDim')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "hr",
+					"table": "DateDate_dim"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableHrLocationDim')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "AzureDataBase"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Location_Dim_Key",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "STORE_LOCATION_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "STORE_NAME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "STORE_ADDRESS",
+						"type": "nvarchar"
+					},
+					{
+						"name": "STORE_PHONE_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "STATE_COUNTRY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "STORE_OPEN_TIME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "STORE_CLOSE_TIME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "STATE_NAME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREATE_USER_DATE",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "LOCATION_DIM"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableHrProductDimCopy')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "AzureDataBase"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SURR_PRODUCT_KEY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PRODUCT_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PRODUCT_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PRODUCT_PRICE",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					},
+					{
+						"name": "IS_ACTIVE",
+						"type": "varchar"
+					},
+					{
+						"name": "PRODUCT_CATEGORY_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PRODUCT_CATEGORY_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PRODUCT_SUBCATEGORY_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PRODUCT_SUBCATEGORY_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PRODUCT_SIZE",
+						"type": "varchar"
+					},
+					{
+						"name": "PRODUCT_DESCRIPTION",
+						"type": "varchar"
+					},
+					{
+						"name": "EFF_START_DATE",
+						"type": "date"
+					},
+					{
+						"name": "EFF_END_DATE",
+						"type": "date"
+					},
+					{
+						"name": "FLAG",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CREATE_USER_DATE",
+						"type": "date"
+					},
+					{
+						"name": "MD5_CHECKSUM",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "PRODUCT_DIM_COPY"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableHrPromotionDim')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "AzureDataBase"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PROMOTION_DIM_KEY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PROMOTION_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PROMOTION_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PREVIOUS_PROMOTION_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PROMOTION_TYPE",
+						"type": "varchar"
+					},
+					{
+						"name": "PREVIOUS_PROMOTION_TYPE",
+						"type": "varchar"
+					},
+					{
+						"name": "DISCOUNT_AMOUNT",
+						"type": "varchar"
+					},
+					{
+						"name": "PREVIOUS_DISCOUNT_AMOUNT",
+						"type": "varchar"
+					},
+					{
+						"name": "START_DATE",
+						"type": "date"
+					},
+					{
+						"name": "PREVIOUS_START_DATE",
+						"type": "date"
+					},
+					{
+						"name": "END_DATE",
+						"type": "date"
+					},
+					{
+						"name": "PREVIOUS_END_DATE",
+						"type": "date"
+					},
+					{
+						"name": "CREATE_USER_DATE",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "PROMOTION_DIM"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableHrSalesFact')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "order_line_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "order_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "customer_dim_key",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "payment_ref_key",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "channel_ref_key",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "delivery_type_ref_key",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "product_topping_dim_key",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "location_dim_key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SURR_PRODUCT_KEY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "promotion_dim_key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "date_key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "order_date",
+						"type": "date"
+					},
+					{
+						"name": "order_status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "quantity",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "unit_price",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					},
+					{
+						"name": "toping_price",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "promotion_amount",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					}
+				],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "SALES_FACT"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableOrderLineDim')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "hr",
+					"table": "orderline_dim"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableOrder_dim')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "hr",
+					"table": "order_dim"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableProduct_Topping_Dim')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Product_Topping_Dim_Key",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PRODUCT_TOPPING_ID",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "TOPPING_NAME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TOPING_PRICE",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "IS_ACTIVE",
+						"type": "bit"
+					},
+					{
+						"name": "EFFECTIVE_DATE",
+						"type": "date"
+					},
+					{
+						"name": "END_DATE",
+						"type": "date"
+					},
+					{
+						"name": "FLAG",
+						"type": "varchar"
+					},
+					{
+						"name": "USER_CREATE_DATE",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "HR",
+					"table": "PRODUCT_TOPPINGS_DIM"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableRecreate')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "AzureDataBase"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "EMP_DEPT_NAME"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		}
+	]
+}
